@@ -209,7 +209,7 @@ def create_app(args):
     languages = load_languages()
     if not languages:
         raise RuntimeError(
-            "No language models installed. Install language models with argospm or from the Argos Translate repository before starting the server."
+            "No language models installed. Install language models with `argospm install <model>` or from the Argos Translate repository before starting the server."
         )
     language_pairs = {}
     for lang in languages:
