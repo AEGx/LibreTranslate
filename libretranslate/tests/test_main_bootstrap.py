@@ -63,3 +63,12 @@ def test_ensure_venv_python_errors_when_flask_missing_and_no_venv(tmp_path, monk
 
     with pytest.raises(SystemExit, match="Flask is required"):
         main._ensure_venv_python(root_path=tmp_path)
+
+
+def test_libretranslate_main_errors_when_flask_missing(monkeypatch):
+    import libretranslate.main as lt_main
+
+    monkeypatch.setattr(lt_main.importlib.util, "find_spec", lambda name: None)
+
+    with pytest.raises(SystemExit, match="Flask is required"):
+        lt_main.main()

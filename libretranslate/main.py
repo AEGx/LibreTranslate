@@ -1,12 +1,20 @@
 import argparse
+import importlib.util
 import operator
 import sys
 import os
 
-from libretranslate.app import create_app
 from libretranslate.default_values import DEFAULT_ARGUMENTS as DEFARGS
-from werkzeug.serving import run_simple
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
+FLASK_REQUIRED_MESSAGE = (
+    "Flask is required to run LibreTranslate. Install dependencies with "
+    "'pip install .' or use the Python executable from the project's venv."
+)
+
+
+def _ensure_flask():
+    if importlib.util.find_spec("flask") is None:
+        raise SystemExit(FLASK_REQUIRED_MESSAGE)
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -260,6 +268,11 @@ def get_args():
 
 
 def main():
+    _ensure_flask()
+    from libretranslate.app import create_app
+    from werkzeug.middleware.dispatcher import DispatcherMiddleware
+    from werkzeug.serving import run_simple
+
     args = get_args()
 
     if args.url_prefix:
