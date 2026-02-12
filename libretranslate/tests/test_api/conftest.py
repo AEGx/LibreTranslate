@@ -17,10 +17,10 @@ class DummyTranslator:
     def __init__(self, to_lang):
         self.to_lang = to_lang
 
-    def hypotheses(self, text, count):
+    def hypotheses(self, text, hypothesis_count):
         return [
             DummyHypothesis(text if index == 0 else f"{text}-{index}")
-            for index in range(count)
+            for index in range(hypothesis_count)
         ]
 
 
