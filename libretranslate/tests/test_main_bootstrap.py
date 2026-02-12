@@ -68,7 +68,14 @@ def test_ensure_venv_python_errors_when_flask_missing_and_no_venv(tmp_path, monk
 def test_libretranslate_main_errors_when_flask_missing(monkeypatch):
     import libretranslate.main as lt_main
 
-    monkeypatch.setattr(lt_main.importlib.util, "find_spec", lambda name: None)
+    original_find_spec = lt_main.importlib.util.find_spec
+
+    def fake_find_spec(name):
+        if name == "flask":
+            return None
+        return original_find_spec(name)
+
+    monkeypatch.setattr(lt_main.importlib.util, "find_spec", fake_find_spec)
 
     with pytest.raises(SystemExit, match="Flask is required"):
         lt_main.main()
