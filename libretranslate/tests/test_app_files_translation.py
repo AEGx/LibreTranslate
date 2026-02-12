@@ -63,5 +63,5 @@ def test_create_app_requires_language_models(monkeypatch):
 
     args = parse_args(["--load-only", "en,es"])
 
-    with pytest.raises(RuntimeError, match="No language models installed"):
+    with pytest.raises(RuntimeError, match="No language models installed.*argospm"):
         create_app(args)
