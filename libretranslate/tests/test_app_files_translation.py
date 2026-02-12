@@ -34,10 +34,10 @@ def test_create_app_with_disabled_file_translation(monkeypatch):
         language_module, "load_languages", lambda: [dummy_en, dummy_es]
     )
 
-    def _fail_if_formats_accessed():
+    def _raise_on_format_access():
         raise AssertionError("get_supported_formats should not be called")
 
-    monkeypatch.setattr(app_module, "get_supported_formats", _fail_if_formats_accessed)
+    monkeypatch.setattr(app_module, "get_supported_formats", _raise_on_format_access)
 
     parser = get_parser()
     args = parser.parse_args(["--load-only", "en,es", "--disable-files-translation"])
