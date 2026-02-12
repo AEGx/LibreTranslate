@@ -65,6 +65,36 @@ def test_ensure_venv_python_errors_when_flask_missing_and_no_venv(tmp_path, monk
         main._ensure_venv_python(root_path=tmp_path)
 
 
+def test_libretranslate_reexecs_when_flask_missing_and_venv_available(tmp_path, monkeypatch):
+    import libretranslate.main as lt_main
+
+    venv_python = _create_venv_python(tmp_path)
+    system_python = tmp_path / "system" / venv_python.name
+    system_python.parent.mkdir(parents=True)
+    system_python.write_text("")
+    monkeypatch.setattr(lt_main.sys, "executable", str(system_python))
+    monkeypatch.setattr(lt_main.sys, "argv", ["libretranslate", "--help"])
+    monkeypatch.setattr(lt_main.importlib.util, "find_spec", lambda name: None)
+
+    exec_calls = {}
+
+    class ExecCalled(RuntimeError):
+        pass
+
+    def fake_execv(path, args):
+        exec_calls["path"] = path
+        exec_calls["args"] = args
+        raise ExecCalled()
+
+    monkeypatch.setattr(lt_main.os, "execv", fake_execv)
+
+    with pytest.raises(ExecCalled):
+        lt_main._ensure_flask(root_path=tmp_path)
+
+    assert exec_calls["path"] == str(venv_python)
+    assert exec_calls["args"] == [str(venv_python), "libretranslate", "--help"]
+
+
 def test_libretranslate_main_errors_when_flask_missing(monkeypatch):
     import libretranslate.main as lt_main
 
