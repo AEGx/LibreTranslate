@@ -11,8 +11,14 @@ from functools import wraps
 from html import unescape
 from timeit import default_timer
 
-import argostranslatefiles
-from argostranslatefiles import get_supported_formats
+try:
+    import argostranslatefiles
+    from argostranslatefiles import get_supported_formats
+except ModuleNotFoundError as exc:
+    if getattr(exc, "name", None) != "argostranslatefiles":
+        raise
+    argostranslatefiles = None
+    get_supported_formats = None
 from flask import Blueprint, Flask, Response, abort, jsonify, render_template, request, send_file, url_for, make_response
 from flask_babel import Babel
 from flask_swagger import swagger
@@ -242,9 +248,16 @@ def create_app(args):
 
     frontend_argos_supported_files_format = []
 
-    for file_format in get_supported_formats():
-        for ff in file_format.supported_file_extensions:
-            frontend_argos_supported_files_format.append(ff)
+    if not args.disable_files_translation:
+        if argostranslatefiles is None:
+            raise ModuleNotFoundError(
+                "Missing dependency for file translation: install argos-translate-files "
+                "or run with --disable-files-translation."
+            )
+
+        for file_format in get_supported_formats():
+            for ff in file_format.supported_file_extensions:
+                frontend_argos_supported_files_format.append(ff)
 
     api_keys_db = None
 
