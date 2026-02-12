@@ -9,7 +9,9 @@ def _create_venv_python(tmp_path):
     venv_bin.mkdir(parents=True)
     python_name = "python.exe" if sys.platform == "win32" else "python"
     venv_python = venv_bin / python_name
-    venv_python.write_text("")
+    venv_python.touch()
+    if sys.platform != "win32":
+        venv_python.chmod(0o755)
     return venv_python
 
 
