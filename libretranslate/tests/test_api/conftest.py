@@ -50,7 +50,7 @@ def app(monkeypatch):
 
     monkeypatch.setattr(init_module, "boot", lambda *args, **kwargs: None)
     monkeypatch.setattr(language_module, "load_languages", lambda: [dummy_en, dummy_es])
-    # Clear cached language codes so detect_languages uses the newly mocked dummy languages.
+    # Clear cached load_lang_codes results so detect_languages uses the newly mocked dummy languages.
     language_module.load_lang_codes.cache_clear()
 
     sys.argv = ['', '--load-only', 'en,es']
