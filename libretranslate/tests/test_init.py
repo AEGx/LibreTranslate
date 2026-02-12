@@ -4,13 +4,12 @@ import pytest
 from libretranslate.init import boot
 
 
+@pytest.mark.skipif(
+    not package.get_installed_packages(),
+    reason="Argos Translate models are unavailable in the current environment.",
+)
 def test_boot_argos():
     """Test Argos translate models initialization"""
-    initial_packages = package.get_installed_packages()
     boot(["en", "es"])
 
-    installed_packages = package.get_installed_packages()
-    if not installed_packages and not initial_packages:
-        pytest.skip("Argos Translate models are unavailable in the current environment.")
-    else:
-        assert len(installed_packages) >= 2
+    assert len(package.get_installed_packages()) >= 2
