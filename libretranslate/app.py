@@ -15,11 +15,10 @@ try:
     import argostranslatefiles
     from argostranslatefiles import get_supported_formats
 except ModuleNotFoundError as exc:
-    missing_module = getattr(exc, "name", None)
-    if missing_module is None:
-        if "argostranslatefiles" not in str(exc):
-            raise
-    elif missing_module != "argostranslatefiles":
+    missing_module = getattr(exc, "name", None) or ""
+    if missing_module and missing_module != "argostranslatefiles":
+        raise
+    if not missing_module and "argostranslatefiles" not in str(exc):
         raise
     argostranslatefiles = None
     get_supported_formats = None
