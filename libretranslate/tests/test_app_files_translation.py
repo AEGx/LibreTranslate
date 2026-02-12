@@ -1,10 +1,8 @@
-import sys
-
 import libretranslate.app as app_module
 import libretranslate.init as init_module
 import libretranslate.language as language_module
 from libretranslate.app import create_app
-from libretranslate.main import get_args
+from libretranslate.main import get_parser
 
 
 class DummyTranslation:
@@ -24,9 +22,6 @@ class DummyLanguage:
 
 
 def test_create_app_with_disabled_file_translation(monkeypatch):
-    monkeypatch.setattr(
-        sys, "argv", ["", "--load-only", "en,es", "--disable-files-translation"]
-    )
 
     dummy_en = DummyLanguage("en")
     dummy_es = DummyLanguage("es")
@@ -43,6 +38,11 @@ def test_create_app_with_disabled_file_translation(monkeypatch):
 
     monkeypatch.setattr(app_module, "get_supported_formats", _raise_if_called)
 
-    app = create_app(get_args())
+    parser = get_parser()
+    args = parser.parse_args(["--load-only", "en,es", "--disable-files-translation"])
+    if args.url_prefix and not args.url_prefix.startswith("/"):
+        args.url_prefix = "/" + args.url_prefix
+
+    app = create_app(args)
 
     assert app is not None
