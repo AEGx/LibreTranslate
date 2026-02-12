@@ -3,6 +3,7 @@ import importlib.util
 import operator
 import sys
 import os
+from pathlib import Path
 
 from libretranslate.default_values import DEFAULT_ARGUMENTS as DEFARGS
 
@@ -12,9 +13,24 @@ FLASK_REQUIRED_MESSAGE = (
 )
 
 
-def _ensure_flask():
-    if importlib.util.find_spec("flask") is None:
-        raise SystemExit(FLASK_REQUIRED_MESSAGE)
+def _venv_python(root_path=None):
+    base_path = Path(root_path) if root_path is not None else Path(__file__).resolve().parents[1]
+    venv_path = base_path / "venv"
+    if sys.platform == "win32":
+        python_path = venv_path / "Scripts" / "python.exe"
+    else:
+        python_path = venv_path / "bin" / "python"
+    return python_path if python_path.is_file() else None
+
+
+def _ensure_flask(root_path=None):
+    if importlib.util.find_spec("flask") is not None:
+        return
+    venv_python = _venv_python(root_path)
+    if venv_python is not None and Path(sys.executable).resolve() != venv_python.resolve():
+        os.execv(str(venv_python), [str(venv_python), *sys.argv])
+        return
+    raise SystemExit(FLASK_REQUIRED_MESSAGE)
 
 def get_parser():
     parser = argparse.ArgumentParser(
