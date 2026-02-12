@@ -18,11 +18,13 @@ def _ensure_venv_python(root_path=None):
     if importlib.util.find_spec("flask") is not None:
         return
     venv_python = _venv_python(root_path)
-    if venv_python is None:
+    if venv_python is not None and Path(sys.executable).resolve() != venv_python.resolve():
+        os.execv(str(venv_python), [str(venv_python), *sys.argv])
         return
-    if Path(sys.executable).resolve() == venv_python.resolve():
-        return
-    os.execv(str(venv_python), [str(venv_python), *sys.argv])
+    raise SystemExit(
+        "Flask is required to run LibreTranslate. Install dependencies with "
+        "'pip install .' or use the Python executable from the project's venv."
+    )
 
 
 def _run():

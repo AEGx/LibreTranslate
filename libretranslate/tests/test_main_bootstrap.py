@@ -1,4 +1,6 @@
 import sys
+
+import pytest
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -54,3 +56,10 @@ def test_ensure_venv_python_skips_when_flask_present(tmp_path, monkeypatch):
     main._ensure_venv_python(root_path=tmp_path)
 
     assert not exec_called["called"]
+
+
+def test_ensure_venv_python_errors_when_flask_missing_and_no_venv(tmp_path, monkeypatch):
+    monkeypatch.setattr(main.importlib.util, "find_spec", lambda name: None)
+
+    with pytest.raises(SystemExit, match="Flask is required"):
+        main._ensure_venv_python(root_path=tmp_path)
