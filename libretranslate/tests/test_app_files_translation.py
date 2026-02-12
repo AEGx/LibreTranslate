@@ -23,7 +23,7 @@ class DummyLanguage:
         self.translations_from = []
 
 
-def test_create_app_skips_supported_formats_when_disabled(monkeypatch):
+def test_create_app_with_disabled_file_translation(monkeypatch):
     monkeypatch.setattr(
         sys, "argv", ["", "--load-only", "en,es", "--disable-files-translation"]
     )
