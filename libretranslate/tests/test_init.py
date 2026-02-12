@@ -9,5 +9,7 @@ def test_boot_argos():
     boot(["en", "es"])
 
     installed_packages = package.get_installed_packages()
-    if len(installed_packages) < 2:
+    if not installed_packages:
         pytest.skip("Argos Translate models are unavailable in the current environment.")
+
+    assert len(installed_packages) >= 2

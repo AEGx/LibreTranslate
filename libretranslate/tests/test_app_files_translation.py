@@ -22,6 +22,14 @@ class DummyLanguage:
         self.translations_from = []
 
 
+def parse_args(args_list):
+    parser = get_parser()
+    args = parser.parse_args(args_list)
+    if args.url_prefix and not args.url_prefix.startswith("/"):
+        args.url_prefix = "/" + args.url_prefix
+    return args
+
+
 def test_create_app_with_disabled_file_translation(monkeypatch):
     """Ensure create_app skips file format discovery when file translation is disabled."""
 
@@ -40,10 +48,7 @@ def test_create_app_with_disabled_file_translation(monkeypatch):
 
     monkeypatch.setattr(app_module, "get_supported_formats", _fail_if_called)
 
-    parser = get_parser()
-    args = parser.parse_args(["--load-only", "en,es", "--disable-files-translation"])
-    if args.url_prefix and not args.url_prefix.startswith("/"):
-        args.url_prefix = "/" + args.url_prefix
+    args = parse_args(["--load-only", "en,es", "--disable-files-translation"])
 
     app = create_app(args)
 
@@ -55,10 +60,7 @@ def test_create_app_requires_language_models(monkeypatch):
     monkeypatch.setattr(init_module, "boot", lambda *args, **kwargs: None)
     monkeypatch.setattr(language_module, "load_languages", lambda: [])
 
-    parser = get_parser()
-    args = parser.parse_args(["--load-only", "en,es"])
-    if args.url_prefix and not args.url_prefix.startswith("/"):
-        args.url_prefix = "/" + args.url_prefix
+    args = parse_args(["--load-only", "en,es"])
 
     with pytest.raises(RuntimeError, match="No language models installed"):
         create_app(args)
