@@ -18,7 +18,10 @@ class DummyTranslator:
         self.to_lang = to_lang
 
     def hypotheses(self, text, count):
-        return [DummyHypothesis(text) for _ in range(count)]
+        return [
+            DummyHypothesis(text if index == 0 else f"{text}-{index}")
+            for index in range(count)
+        ]
 
 
 class DummyTranslation:
@@ -47,6 +50,7 @@ def app(monkeypatch):
 
     monkeypatch.setattr(init_module, "boot", lambda *args, **kwargs: None)
     monkeypatch.setattr(language_module, "load_languages", lambda: [dummy_en, dummy_es])
+    # Clear cached codes so detect_languages uses the dummy languages.
     language_module.load_lang_codes.cache_clear()
 
     sys.argv = ['', '--load-only', 'en,es']
