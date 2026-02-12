@@ -1,3 +1,4 @@
+import importlib.util
 import io
 import math
 import os
@@ -11,14 +12,12 @@ from functools import wraps
 from html import unescape
 from timeit import default_timer
 
-try:
-    import argostranslatefiles
-    from argostranslatefiles import get_supported_formats
-except ModuleNotFoundError as exc:
-    if getattr(exc, "name", None) != "argostranslatefiles":
-        raise
+if importlib.util.find_spec("argostranslatefiles") is None:
     argostranslatefiles = None
     get_supported_formats = None
+else:
+    import argostranslatefiles
+    from argostranslatefiles import get_supported_formats
 from flask import Blueprint, Flask, Response, abort, jsonify, render_template, request, send_file, url_for, make_response
 from flask_babel import Babel
 from flask_swagger import swagger
