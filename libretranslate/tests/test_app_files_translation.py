@@ -1,6 +1,7 @@
 import libretranslate.app as app_module
 import libretranslate.init as init_module
 import libretranslate.language as language_module
+import pytest
 from libretranslate.app import create_app
 from libretranslate.main import get_parser
 
@@ -47,3 +48,17 @@ def test_create_app_with_disabled_file_translation(monkeypatch):
     app = create_app(args)
 
     assert app is not None
+
+
+def test_create_app_requires_language_models(monkeypatch):
+    """Ensure create_app fails fast when no language models are available."""
+    monkeypatch.setattr(init_module, "boot", lambda *args, **kwargs: None)
+    monkeypatch.setattr(language_module, "load_languages", lambda: [])
+
+    parser = get_parser()
+    args = parser.parse_args(["--load-only", "en,es"])
+    if args.url_prefix and not args.url_prefix.startswith("/"):
+        args.url_prefix = "/" + args.url_prefix
+
+    with pytest.raises(RuntimeError, match="No language models installed"):
+        create_app(args)
