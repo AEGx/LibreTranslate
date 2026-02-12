@@ -17,8 +17,8 @@ class DummyTranslator:
     def __init__(self, to_lang):
         self.to_lang = to_lang
 
-    def hypotheses(self, text, count):
-        return [DummyHypothesis(text) for _ in range(count)]
+    def hypotheses(self, text, num_hypotheses):
+        return [DummyHypothesis(text) for _ in range(num_hypotheses)]
 
 
 class DummyTranslation:
