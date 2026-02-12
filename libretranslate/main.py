@@ -29,7 +29,6 @@ def _ensure_flask(root_path=None):
     venv_python = _venv_python(root_path)
     if venv_python is not None and Path(sys.executable).resolve() != venv_python.resolve():
         os.execv(str(venv_python), [str(venv_python), *sys.argv])
-        return
     raise SystemExit(FLASK_REQUIRED_MESSAGE)
 
 def get_parser():

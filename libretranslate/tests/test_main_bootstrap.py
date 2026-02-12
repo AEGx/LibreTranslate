@@ -78,13 +78,18 @@ def test_libretranslate_reexecs_when_flask_missing_and_venv_available(tmp_path, 
 
     exec_calls = {}
 
+    class ExecCalled(RuntimeError):
+        pass
+
     def fake_execv(path, args):
         exec_calls["path"] = path
         exec_calls["args"] = args
+        raise ExecCalled()
 
     monkeypatch.setattr(lt_main.os, "execv", fake_execv)
 
-    lt_main._ensure_flask(root_path=tmp_path)
+    with pytest.raises(ExecCalled):
+        lt_main._ensure_flask(root_path=tmp_path)
 
     assert exec_calls["path"] == str(venv_python)
     assert exec_calls["args"] == [str(venv_python), "libretranslate", "--help"]
