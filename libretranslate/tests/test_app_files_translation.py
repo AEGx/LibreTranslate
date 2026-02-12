@@ -8,11 +8,15 @@ from libretranslate.main import get_args
 
 
 class DummyTranslation:
+    """Minimal translation stub for create_app tests."""
+
     def __init__(self, to_lang):
         self.to_lang = to_lang
 
 
 class DummyLanguage:
+    """Minimal language stub for create_app tests."""
+
     def __init__(self, code):
         self.code = code
         self.name = code

@@ -15,7 +15,7 @@ try:
     import argostranslatefiles
     from argostranslatefiles import get_supported_formats
 except ModuleNotFoundError as exc:
-    if exc.name != "argostranslatefiles":
+    if getattr(exc, "name", None) != "argostranslatefiles":
         raise
     argostranslatefiles = None
     get_supported_formats = None
