@@ -207,6 +207,10 @@ def create_app(args):
     if not args.disable_files_translation:
         remove_translated_files.setup(get_upload_dir())
     languages = load_languages()
+    if not languages:
+        raise RuntimeError(
+            "No language models installed. Install models via the Argos Translate package manager (argospm), e.g. `argospm install <model>`, or from the Argos Translate repository before starting the server."
+        )
     language_pairs = {}
     for lang in languages:
         language_pairs[lang.code] = sorted([l.to_lang.code for l in lang.translations_from])
