@@ -22,6 +22,7 @@ class DummyLanguage:
 
 
 def test_create_app_with_disabled_file_translation(monkeypatch):
+    """Ensure create_app skips file format discovery when file translation is disabled."""
 
     dummy_en = DummyLanguage("en")
     dummy_es = DummyLanguage("es")
