@@ -6,7 +6,8 @@ from libretranslate.init import boot
 
 def test_boot_argos():
     """Test Argos translate models initialization"""
-    boot(["en", "es"])
+    result = boot(["en", "es"])
+    assert result is None
 
     installed_packages = package.get_installed_packages()
     if not installed_packages:
