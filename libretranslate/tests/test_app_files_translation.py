@@ -23,7 +23,7 @@ class DummyLanguage:
 
 
 def parse_args(args_list):
-    """Parse CLI arguments and normalize the URL prefix like libretranslate.main for create_app tests."""
+    """Parse CLI arguments and normalize the URL prefix (prepend '/' if missing) like libretranslate.main."""
     parser = get_parser()
     args = parser.parse_args(args_list)
     if args.url_prefix and not args.url_prefix.startswith("/"):
